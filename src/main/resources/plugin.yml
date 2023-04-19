@@ -1,0 +1,4 @@
+name: MudsItems
+version: '${project.version}'
+main: mudkip989.plugins.mudsitems.MudsItems
+api-version: 1.19

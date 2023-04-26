@@ -3,6 +3,7 @@ package mudkip989.plugins.mudsitems.items;
 import mudkip989.plugins.mudsitems.*;
 import mudkip989.plugins.mudsitems.utils.*;
 import org.bukkit.*;
+import org.bukkit.block.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.entity.*;
@@ -87,15 +88,28 @@ public class Dodgeball {
 
 
     public void Tick() {
+        try{
+            location = location.add(velocity);
+            Predicate<Entity> filt = x -> (x.getLocation().distance(location) < 1 && !noCollide.contains(x));
+            RayTraceResult ray = getInstance().world.rayTrace(location, velocity, velocity.length(), FluidCollisionMode.NEVER, false, 0.25, filt);
+            if(ray != null)
+            {
+                BlockFace bf = ray.getHitBlockFace();
+                Vector hitloc = ray.getHitPosition();
+                if(bf != null){
+                    Vector normal = bf.getDirection();
+                    velocity = VectorFunc.reflect(velocity, normal);
+                }
+            }
 
-        Predicate<Entity> filt = x -> (x.getLocation().distance(location) < 1 && noCollide.contains(x));
-        RayTraceResult ray = getInstance().world.rayTrace(location, velocity, velocity.length(), FluidCollisionMode.NEVER, false, 0.25, filt);
-        location = location.add(velocity);
-        entity.teleportAsync(location);
-        if (throwerInclusion && !isCollidingWith(Bukkit.getPlayer(thrower))){
-            if(noCollide.contains(Bukkit.getPlayer(thrower))){
+
+            entity.teleportAsync(location);
+            if (throwerInclusion && !isCollidingWith(Bukkit.getPlayer(thrower))){
                 noCollide.remove(Bukkit.getPlayer(thrower));
             }
+        }catch (Exception e){
+            log.severe(e.toString());
+            getInstance().dodgeballs.remove(this);
         }
     }
 

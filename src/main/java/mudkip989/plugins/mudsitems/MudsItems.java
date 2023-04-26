@@ -47,7 +47,7 @@ public final class MudsItems extends JavaPlugin {
             public void run() {
                 Updater.Dodgeballs();
             }
-        }.runTaskTimerAsynchronously(MudsItems.getInstance(), 1, 1);
+        }.runTaskTimer(MudsItems.getInstance(), 1, 1);
     }
 
     @Override
